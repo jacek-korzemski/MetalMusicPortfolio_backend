@@ -1,5 +1,7 @@
+require("dotenv").config();
 const http = require("http");
 const app = require("./app");
+const auth = require("./auth");
 
 app.set("port", 3001);
 const server = http.createServer(app);
@@ -10,6 +12,25 @@ const jwt = require("jsonwebtoken");
 const User = require("./db/userModel");
 
 dbConnect();
+
+app.use((req, res, next) => {
+  const allowedOrigins = [process.env.FRONT_URL];
+  const origin = req.headers.origin;
+  if (allowedOrigins.includes(origin)) {
+    res.setHeader("Access-Control-Allow-Origin", origin);
+  }
+  res.setHeader(
+    "Access-Control-Allow-Headers",
+    "Origin, X-Requested-With, Content, Accept, Content-Type, Authorization"
+  );
+  res.setHeader("Access-Control-Allow-Methods", "GET, POST");
+  return next();
+});
+
+app.get("/", (request, response) => {
+  response.status(200);
+  response.end("ok");
+});
 
 app.get("/test", (request, response) => {
   response.send("get request is working");
@@ -108,7 +129,7 @@ app.get("/get-reviews", (request, response) => {
   response.json({ message: "You are free to access me anytime" });
 });
 
-app.get("/post-review", (request, response) => {
+app.post("/post-review", auth, (request, response) => {
   response.json({ message: "You are authorized to access me" });
 });
 
