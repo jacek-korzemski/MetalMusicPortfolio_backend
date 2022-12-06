@@ -14,7 +14,7 @@ const User = require("./db/userModel");
 dbConnect();
 
 app.use((req, res, next) => {
-  const allowedOrigins = [process.env.FRONT_URL];
+  const allowedOrigins = [process.env.FRONT_URL, process.env.FRONT_URL_DEV];
   const origin = req.headers.origin;
   if (allowedOrigins.includes(origin)) {
     res.setHeader("Access-Control-Allow-Origin", origin);
