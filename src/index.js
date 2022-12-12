@@ -132,6 +132,9 @@ app.post("/post-review", auth, async (request, response) => {
     secret: process.env.BACKEND_CONNECT_SECRET,
     ...request.body,
   };
+
+  console.log(body);
+
   await fetch(process.env.BACKEND_URL + "/api/addReview", {
     method: "POST",
     body: JSON.stringify(body),
