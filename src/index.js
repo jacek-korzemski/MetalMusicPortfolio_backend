@@ -44,11 +44,18 @@ app.post("/test", (request, response) => {
 });
 
 app.post("/register", (request, response) => {
+  if (!request?.body?.username) {
+    return false;
+  }
+
+  console.log("Registering: " + request?.body?.username);
+
   bcrypt
     .hash(request.body.password, 10)
     .then((hashedPassword) => {
       const user = new User({
         email: request.body.email,
+        username: request.body.username,
         password: hashedPassword,
       });
 
@@ -118,16 +125,6 @@ app.post("/login", (request, response) => {
         e,
       });
     });
-});
-
-// TODO: [
-//   create Review model
-//   create add review endpoint
-//   create get reviews by video id endpoint
-// ]
-
-app.get("/get-reviews", (request, response) => {
-  response.json({ message: "You are free to access me anytime" });
 });
 
 app.post("/post-review", auth, async (request, response) => {
