@@ -2,6 +2,7 @@ require("dotenv").config();
 const http = require("http");
 const app = require("./app");
 const auth = require("./auth");
+const fetch = require("node-fetch");
 
 app.set("port", 3001);
 const server = http.createServer(app);
@@ -129,8 +130,23 @@ app.get("/get-reviews", (request, response) => {
   response.json({ message: "You are free to access me anytime" });
 });
 
-app.post("/post-review", auth, (request, response) => {
-  response.json({ message: "You are authorized to access me" });
+app.post("/post-review", auth, async (request, response) => {
+  const body = {
+    secret: process.env.BACKEND_CONNECT_SECRET,
+    ...request.body,
+  };
+  await fetch(process.env.BACKEND_URL + "/api/addReview", {
+    method: "POST",
+    body: JSON.stringify(body),
+  }).then((r) => {
+    if (r.ok) {
+      response.status(200);
+      response.json({ message: "ok" });
+    } else {
+      response.status(500);
+      response.json({ message: "not ok" });
+    }
+  });
 });
 
 server.listen(3001);
