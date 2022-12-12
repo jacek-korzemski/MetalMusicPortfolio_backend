@@ -33,22 +33,10 @@ app.get("/", (request, response) => {
   response.end("ok");
 });
 
-app.get("/test", (request, response) => {
-  response.send("get request is working");
-  response.end();
-});
-
-app.post("/test", (request, response) => {
-  response.send("post request is working");
-  response.end();
-});
-
 app.post("/register", (request, response) => {
   if (!request?.body?.username) {
     return false;
   }
-
-  console.log("Registering: " + request?.body?.username);
 
   bcrypt
     .hash(request.body.password, 10)
@@ -132,8 +120,6 @@ app.post("/post-review", auth, async (request, response) => {
     secret: process.env.BACKEND_CONNECT_SECRET,
     ...request.body,
   };
-
-  console.log(body);
 
   await fetch(process.env.BACKEND_URL + "/api/addReview", {
     method: "POST",
